@@ -1,5 +1,5 @@
-# Use OpenJDK 21 as base image
-FROM openjdk:21-jdk-slim
+# Use OpenJDK 17 as base image
+FROM openjdk:17-jdk-slim
 
 # Set working directory
 WORKDIR /app
@@ -14,6 +14,7 @@ EXPOSE 8080
 ENV MONGODB_URI=""
 ENV DATABASE_NAME="memeapp"
 ENV JWT_SECRET=""
+ENV PORT=""
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
