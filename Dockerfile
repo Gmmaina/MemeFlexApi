@@ -1,20 +1,34 @@
-# 1) Build stage: use Gradle + JDK to compile & shadowJar
-FROM gradle:8.14.3-jdk21 AS builder
-WORKDIR /home/gradle/project
-COPY --chown=gradle:gradle . .
-# Run the Gradle shadowJar task (no daemon for CI)
-RUN gradle clean shadowJar --no-daemon
+# Multi-stage build
+FROM gradle:8.5-jdk21 AS build
 
-# 2) Runtime stage: slim JDK image with only the fat JAR
-FROM eclipse-temurin:21-jdk-alpine
+# Set working directory
 WORKDIR /app
 
-# Copy the fat JAR from the builder stage
-COPY --from=builder /home/gradle/project/build/libs/meme-backend-all.jar app.jar
+# Copy gradle files first (for better caching)
+COPY build.gradle.kts settings.gradle.kts gradle.properties ./
 
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN gradle buildFatJar --no-daemon
+
+# Runtime stage
+FROM openjdk:21-jdk-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy the JAR file from build stage
+COPY --from=build /app/build/libs/meme-backend-all.jar app.jar
+
+# Expose port
 EXPOSE 8080
+
+# Set environment variables with defaults
 ENV MONGODB_URI=""
 ENV DATABASE_NAME="memeapp"
 ENV JWT_SECRET=""
 
+# Run the application
 CMD ["java", "-jar", "app.jar"]

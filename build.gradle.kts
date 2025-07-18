@@ -6,7 +6,6 @@ plugins {
     kotlin("jvm") version "2.1.10"
     id("io.ktor.plugin") version "3.2.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.example"
@@ -14,6 +13,9 @@ version = "0.0.1"
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 repositories {
@@ -49,11 +51,10 @@ dependencies {
     // Email validation
     implementation("commons-validator:commons-validator:1.7")
 
-    // Shadow JAR configuration for deployment
-    tasks.shadowJar {
+}
+// Configure the fat JAR task (Ktor plugin provides this)
+ktor {
+    fatJar {
         archiveFileName.set("meme-backend-all.jar")
-        manifest {
-            attributes["Main-Class"] = "com.example.ApplicationKt"
-        }
     }
 }
