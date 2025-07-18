@@ -1,0 +1,24 @@
+package com.example.data.responses
+
+import kotlinx.serialization.Serializable
+import com.example.data.models.User
+
+@Serializable
+data class UserResponse(
+    val id: String,
+    val username: String,
+    val email: String,
+    val profileImage: String?,
+    val totalLikes: Int,
+    val createdAt: Long
+)
+
+// Extension functions
+fun User.toResponse() = UserResponse(
+    id = stringId,
+    username = username,
+    email = email,
+    profileImage = profileImage,
+    totalLikes = totalLikes,
+    createdAt = createdAt
+)
