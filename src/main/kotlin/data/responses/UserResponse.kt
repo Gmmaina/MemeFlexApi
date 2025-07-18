@@ -1,7 +1,7 @@
 package com.example.data.responses
 
-import kotlinx.serialization.Serializable
 import com.example.data.models.User
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserResponse(

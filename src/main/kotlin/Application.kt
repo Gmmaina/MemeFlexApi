@@ -1,23 +1,20 @@
 package com.example
 
 import com.example.auth.JwtConfig
-import com.example.database.DatabaseFactory
 import com.example.data.responses.ErrorResponse
+import com.example.database.DatabaseFactory
 import com.example.routes.configureRoutes
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.path
+import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.Routing
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
@@ -28,11 +25,17 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    // Get configuration from environment variables (for production)
+    val connectionString = environment.config.propertyOrNull("database.connectionString")?.getString()
+        ?: System.getenv("MONGODB_URI")
+        ?: "mongodb://localhost:27017"
+
+    val databaseName = environment.config.propertyOrNull("database.name")?.getString()
+        ?: System.getenv("DATABASE_NAME")
+        ?: "memeapp"
+
     // Initialize database
-    DatabaseFactory.init(
-        connectionString = "mongodb://localhost:27017",
-        databaseName = "memeapp"
-    )
+    DatabaseFactory.init(connectionString, databaseName)
 
     // Configure plugins
     configureContentNegotiation()
@@ -43,7 +46,6 @@ fun Application.module() {
 
     // Configure routes
     configureRoutes()
-    configureRouting()
 
     // Create indexes when the application starts (in a coroutine)
     launch {

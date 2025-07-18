@@ -7,8 +7,9 @@ import io.ktor.server.auth.jwt.*
 import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
+
 object JwtConfig {
-    private const val SECRET = "your-secret-key-change-in-production"
+    private val SECRET = System.getenv("JWT_SECRET") ?: "your-secret-key-change-in-production"
     private const val ISSUER = "meme-app"
     private const val AUDIENCE = "meme-app-users"
     private const val VALIDITY_MS = 1000L * 60 * 60 * 24 * 7 // 7 days

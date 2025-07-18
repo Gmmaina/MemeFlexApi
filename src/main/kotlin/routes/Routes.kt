@@ -4,11 +4,13 @@ package com.example.routes
 import com.example.auth.JwtConfig
 import com.example.auth.PasswordUtils
 import com.example.auth.ValidationUtils
-import com.example.data.requests.*
-import com.example.data.responses.*
-import com.example.data.models.*
+import com.example.data.models.Meme
+import com.example.data.models.User
+import com.example.data.requests.CreateMemeRequest
 import com.example.data.requests.LoginRequest
 import com.example.data.requests.RegisterRequest
+import com.example.data.requests.UpdateMemeRequest
+import com.example.data.responses.*
 import com.example.repositories.MemeRepository
 import com.example.repositories.UserRepository
 import io.ktor.http.*
