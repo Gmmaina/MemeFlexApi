@@ -34,7 +34,7 @@ fun Application.configureRoutes() {
         get("/health") {
             try {
                 // Try to count documents to test DB connection
-                val userCount = userRepository.getUserMemeCount("test")
+                val userCount = memeRepository.getUserMemeCount("test")
                 call.respond(mapOf(
                     "status" to "healthy",
                     "database" to "connected",
