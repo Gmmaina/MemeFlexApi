@@ -15,9 +15,21 @@ class UserRepository {
     suspend fun createUser(user: User): User? {
         return try {
             println("🔄 Attempting to create user: ${user.username}")
-            collection.insertOne(user)
-            println("✅ User created successfully: ${user.stringId}")
-            user
+
+            // Insert the user and get the result
+            val result = collection.insertOne(user)
+
+            if (result.insertedId != null) {
+                // Get the inserted ID and create a new user object with the ID
+                val insertedId = result.insertedId!!.asObjectId().value
+                val userWithId = user.copy(id = insertedId)
+
+                println("✅ User created successfully: ${userWithId.stringId}")
+                userWithId
+            } else {
+                println("❌ Failed to get inserted ID")
+                null
+            }
         } catch (e: Exception) {
             println("❌ Error creating user: ${e.message}")
             e.printStackTrace()

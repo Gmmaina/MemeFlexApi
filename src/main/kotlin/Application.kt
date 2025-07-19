@@ -46,7 +46,6 @@ fun Application.module() {
 
     // Configure routes
     configureRoutes()
-    configureRouting()
 
     // Create indexes when the application starts (in a coroutine)
     launch {

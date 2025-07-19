@@ -8,6 +8,7 @@ import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
 
+
 object JwtConfig {
     private val SECRET = System.getenv("JWT_SECRET") ?: "your-secret-key-change-in-production"
     private const val ISSUER = "meme-app"
@@ -23,6 +24,7 @@ object JwtConfig {
         .build()
 
     fun generateToken(userId: String, username: String): String {
+        println("🔑 Generating token for user ID: '$userId', username: '$username'")
         return JWT.create()
             .withSubject("Authentication")
             .withIssuer(ISSUER)

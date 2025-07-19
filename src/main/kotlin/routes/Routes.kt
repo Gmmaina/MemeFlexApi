@@ -26,6 +26,29 @@ fun Application.configureRoutes() {
     val memeRepository = MemeRepository()
 
     routing {
+        // Health check endpoint
+        get("/") {
+            call.respond(mapOf("status" to "OK", "message" to "Meme API is running"))
+        }
+
+        get("/health") {
+            try {
+                // Try to count documents to test DB connection
+                val userCount = userRepository.getUserMemeCount("test")
+                call.respond(mapOf(
+                    "status" to "healthy",
+                    "database" to "connected",
+                    "timestamp" to System.currentTimeMillis()
+                ))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.ServiceUnavailable, mapOf(
+                    "status" to "unhealthy",
+                    "database" to "disconnected",
+                    "error" to e.message
+                ))
+            }
+        }
+
         // Auth routes
         route("/auth") {
             post("/register") {
